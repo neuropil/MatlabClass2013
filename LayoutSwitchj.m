@@ -1,4 +1,4 @@
 desktop = com.mathworks.mde.desk.MLDesktop.getInstance;
-desktop.restoreLayout('Command Window Only');
-desktop.restoreLayout('JohnTwork');
+desktop.restoreLayout('CMDWindow');
+desktop.restoreLayout('JohnTWork');
 desktop.restoreLayout('MatlabClass2013_1');
