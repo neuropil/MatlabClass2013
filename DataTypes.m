@@ -278,7 +278,24 @@ AllcarData2 = cell2struct(carData,VarNames,2);
 
 
 %% DATASET ARRAYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% First a brief intro to import Excel files
+
+[matrix_of_numbers,...
+ cellArray_of_strings,...
+ cellArray_of_all] = xlsread('HospitalData_HF.xlsx');
+
+% Note that all outputs have the same dimensions
+% In the matrix string columns are filled with NaNs
+% The cell array of strings leaves number columns empty
+% Note that the matrix of numbers does not have column headings
+
+importXLS = importdata('HospitalData_HF.xlsx');
+
+%%
+
+
 [~,~,cellArray] = xlsread('ClassXLs.xlsx')
 
 % Complain about input
