@@ -87,8 +87,8 @@ buickvar = Mfg(2,:)
 MfgCellarray = cellstr(Mfg);
 
 % Let's see if the class of these two variables are different now
-class(Mfg)
-class(MfgCellarray)
+MfgClass = class(Mfg)
+MfgCAClass = class(MfgCellarray)
 
 %% Examine cell array elements
 
@@ -104,7 +104,7 @@ lengthofchevCellArray = length(MfgCellarray{1})
 buickVar2 = MfgCellarray{2}
 lengthOfbuickVar2 = length(buickVar2)
 
-% sting variables in individual cells eliminate leading and trailing blanks 
+% string variables in individual cells eliminate leading and trailing blanks 
 
 % The big advantage of a cell array is the ability to combine different data types
 
@@ -117,7 +117,10 @@ lengthOfbuickVar2 = length(buickVar2)
 % names so I will use a function 'num2cell' which converts each numeric
 % value to a single cell
 
-horsepowerCA = num2cell(Horsepower);
+horsepowerCA1 = {Horsepower}
+
+%%
+horsepowerCA = num2cell(Horsepower)
 
 %% Is there a class difference between Horsepower and horsepowerCA
 
@@ -231,6 +234,8 @@ mouse(1).test = [178; 185; 171];
 mouse(2).name = 'Case63';
 mouse(2).group = 'water deprived';
 mouse(2).test = [68; 118; 172];
+
+%%
 
 numanimals = numel(mouse);
 for p = 1:numanimals
