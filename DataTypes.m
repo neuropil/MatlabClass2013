@@ -8,6 +8,26 @@
 % 2. Struct Array
 % 3. Dataset Array
 
+%% First a brief intro to import Excel files
+
+% These are the three possible output arguments of 'xlsread'
+[matrix_of_numbers,...
+ cellArray_of_strings,...
+ cellArray_of_all] = xlsread('HospitalData_HF.xlsx');
+
+% Note that all outputs have the same dimensions
+% In the matrix string columns are filled with NaNs
+% The cell array of strings leaves number columns empty
+% Note that the matrix of numbers does not have column headings
+
+% Matlab's generic import tool
+importXLS = importdata('HospitalData_HF.xlsx');
+
+%%
+clear all; clc
+
+%%
+
 % Load sample dataset
 load carbig % matlab data set
 
@@ -133,19 +153,25 @@ horsepowerCA1 = {Horsepower}
 %% What I really want is a cell for each numeric value 
 % Use the function num2cell
 horsepowerCA = num2cell(Horsepower)
+%%
+
+clc
 
 %% Is there a class difference between Horsepower and horsepowerCA
 
-class(Horsepower)
-class(horsepowerCA)
+original_HP = class(Horsepower)
+new_HP = class(horsepowerCA)
 %% You can also check speific properties with is* functions
 
 % http://www.mathworks.com/help/matlab/ref/is.html?searchHighlight=is+functions
 
-iscell(Horsepower)
-isvector(Horsepower)
+is_it_a_cell = iscell(Horsepower)
+is_it_a_vec = isvector(Horsepower)
 
 %% Combine car names cell array and horsepower cell array
+
+% ONE ADVANTAGE is the ability to align different variable types in a
+% matrix like format; easier for indexing
 
 % I am going to horizontally concatenate these two cell arrays using the
 % function 'horzcat'
@@ -159,6 +185,10 @@ upperVals = carArray(1:5,1:2)
 % observations. Each cell row will contain an observation whereas each
 % column will contain a different variable. Very helpful when looping
 % through multiple variables.
+
+%%
+
+clc
 
 %% Another advantage of cell arrays is the capacity to hold differently sized vectors
 
@@ -188,6 +218,7 @@ CA2 = {cell1,cell2 ; cell3,cell4}
 % 2. Can be cumbersome to work with for data analysis; 
 % better for extraction/orgization/storage
 
+clc
 
 %% STRUCTURE ARRAYS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,37 +256,47 @@ carsStruct.name
 
 carsStruct(1)
 
-
 %% Examine the second case in the stucture
 
 carsStruct(2)
+
+%% Easy to add new levels to existing structures
+
+carsStruct(1).price = 20000
+carsStruct(2).price = 25000
+
+%% New struct
+
+carsStruct(1)
 
 %% Different datasets in each structure element
 
 mouse(1).name = 'Case56';
 mouse(1).group = 'control';
-mouse(1).test = [178; 185; 171];
+mouse(1).data = [178; 185; 171];
 
 mouse(2).name = 'Case63';
 mouse(2).group = 'water deprived';
-mouse(2).test = [68; 118; 172];
+mouse(2).data = [68; 118; 172];
+clc
+%% Examine 1 level from new struct
 
-%%
-
-numanimals = numel(mouse);
-for p = 1:numanimals
-   figure
-   bar(mouse(p).test)
-   title(mouse(p).group)
-   xlabel('Day')
-end
+mouse(1)
 
 %% Access field names of structures
+
+% Easy way to access levels of a struct array is to use the function
+% fieldnames
 
 structFnames = fieldnames(mouse)
 
 %% Dynamic field names for structures
 
+% This next example will:
+% 1. Show you the long way to construct a struct array from a cell array
+% 2. Introduce to the use of dynamic fieldnames which can be very useful
+
+% First let's create an unlabled cell array
 % Unlabeled cell array that contains car data of varying variable types
 
 carData = {Acceleration,Cylinders,Displacement,Mfg}
@@ -290,83 +331,74 @@ AllcarData2 = cell2struct(carData,VarNames,2);
 %% DATASET ARRAYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% First a brief intro to import Excel files
-
-[matrix_of_numbers,...
- cellArray_of_strings,...
- cellArray_of_all] = xlsread('HospitalData_HF.xlsx');
-
-% Note that all outputs have the same dimensions
-% In the matrix string columns are filled with NaNs
-% The cell array of strings leaves number columns empty
-% Note that the matrix of numbers does not have column headings
-
-importXLS = importdata('HospitalData_HF.xlsx');
-
 %%
 
-[~,~,cellArray] = xlsread('ClassXLs.xlsx')
+clc
+%% Compare dataset and cell array
 
-% Complain about input
+carDataCA = horzcat(num2cell(Acceleration),num2cell(Cylinders),num2cell(Displacement),cellstr(Mfg));
+carDataDS = dataset(Acceleration,Cylinders,Displacement,MfgCellarray);
+
+carDataCA_small = carDataCA(1:10,:)
+carDataDS_small = carDataDS(1:10,:) % Notice that dataset assumes variable names to be column headings
 
 % Extract column names to own variable OR
 % How to make it more useful: dataset array
 
-%% Convert to dataset array
-
-% If you have 2013a 
-
-dataSet = cell2dataset(cellArray)
-
-% This assumes that the first cell in each column is the column title
 
 %% Let's say that was not the case
-colNames = cellArray(1,1:end)
-NocolsCA = cellArray(2:end,1:end)
 
-% have to designate col names with 'VarNames' input argument
-dataSet2 = cell2dataset(NocolsCA,'VarNames',colNames)
+var1 = Acceleration; var2 = Cylinders; var3 = Displacement; var4 = MfgCellarray;
 
-%% If you are not running Matlab 2013a
-% Just include the vectors of all data you want concatentated into a
-% dataset array the variable name will become the column name
+NocolsCA = dataset(var1(1:10,:),var2(1:10,:),var3(1:10,:),var4(1:10,:))
 
-dataSet3 = dataset(Acceleration,Cylinders,Displacement,MfgCellarray)
+%% Explicitly change column headings 
+
+NocolsCA.Properties.VarNames = VarNames
+
+% if you have 2013a can use this function
+% dataSet2 = cell2dataset(NocolsCA,'VarNames',VarNames)
 
 %% What can we do with a dataset array
+clc
+%% 1. Use '.' dot notation to access different variables
 
-% use '.' dot notation to access different variables
+carDataDS_small.MfgCellarray
 
-dataSet3.MfgCellarray
+%% 2. Index on a subset of data in one variable
 
-%% Index on a subset of data in one variable
+dataout = carDataDS(carDataDS.Cylinders == 4,:)
 
-dataout = dataSet3(dataSet3.Cylinders == 4,:)
+%% 3. Quick load an Excel sheet as a dataset
 
+dataset('XLSFile','hospital.xls','ReadObsNames',true)
 
-%% One more example
-
+%% 4. Convert variables to nominal (i.e. categorically discrete)
 load('hospital')
+hospitalDS = hospital
 
-% Let's examine the dataset
-hospital
+% What kind of variable type does the Smoker column contain?
 
-%% Let's write this conditional together
-% 
-% NSyF = hospital.Sex == ? & hospital.Age ? 25 & hospital.Smoker == ?  
-% 
-% Extract smoker column
+%% 5. Define how the discrete values should be interpreted 
+hospitalDS.Smoker = nominal(hospitalDS.Smoker,{'no','yes'})
 
-%% What class it the smoker column
 
-class(hospital.Smoker)
+%% 6. Use a series of conditionals to extract data
 
-%% Add the new variable to our existing dataset array
+% Let's say we want to run a study on a particular demographic
 
-% Combine new logical dataset
+DemoGr = hospitalDS.Sex == 'Male' & (hospitalDS.Age > 35 & hospitalDS.Age < 45) & hospitalDS.Smoker == 'no';
 
-hospital.NSyF = NSyF
+%% Index on new variable
 
+hospitalDS(DemoGr,:)
+
+%% 7. Add the new variable to our existing dataset array
+
+hospitalDS.DemoGr = DemoGr
+
+%%
+clc
 %% Structure and dataset combination STEP 1
 
 % In this block of code I'm going to first determine the number of unique
@@ -395,8 +427,8 @@ CarCylTypes = struct;
 for ci = 1:length(uniqueCylinders)
     
     % Looking ahead I know that I want to name each layer of the structure
-    % by the cylinder identity, but I don't know what value will be and it
-    % could change with a different list of engines, so rather than hard
+    % by the cylinder identity, but I don't want to hard code that value 
+    % because it could change with a different list of engines, so rather than hard
     % code the structure layer names, I will use the dynamic fieldname
     % feature combined with my list of unique cylinder groups
     
@@ -435,3 +467,8 @@ mean(CarCylTypes.Cyl_4.Acceleration)
 mean(CarCylTypes.Cyl_4.Acceleration(CarCylTypes.Cyl_4.Displacement > 100,:))
 
 %% Any Questions??????
+
+
+
+
+
