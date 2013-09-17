@@ -20,6 +20,7 @@
 % The cell array of strings leaves number columns empty
 % Note that the matrix of numbers does not have column headings
 
+%%
 % Matlab's generic import tool
 importXLS = importdata('HospitalData_HF.xlsx');
 
@@ -34,10 +35,10 @@ load carbig % matlab data set
 % other sample data sets http://www.mathworks.com/help/stats/_bq9uxn4.html
 
 %% Let's start by examining one of the variables in the carbig dataset
-% Most of you are familiar with vectors and matricies, but what about a
-% vector of strings
+% Most of you are familiar with vectors and matricies, 
+% Briefly review a vector of strings
 
-% Is there a vector of stings in the workspace?
+% Is there a vector of strings in the workspace?
 
 % Let's use 'whos'
 whos
@@ -56,6 +57,7 @@ b = 'some string'; % string of characters
 c = 1; % single numeric
 d = pi; % matlab numeric
 num = 17; e = num; % inherited numeric from variable assignment
+clc
 %% 'whos' will display the class of all variables in workspace
 
 whos('a','b','c','d','e')
@@ -316,16 +318,15 @@ end
 
 SomecarData = struct;
 for i = 1:10
-    SomecarData.(MfgCellarray{i}).Accel = Acceleration(i)
-    SomecarData.(MfgCellarray{i}).Cyli = Cylinders(i)
-    SomecarData.(MfgCellarray{i}).Disp = Displacement(i)
-    SomecarData.(MfgCellarray{i}).HP = Horsepower(i)
+    for i2 = 1:length(carData)
+        SomecarData.(MfgCellarray{i}).(VarNames{i2}) = carData{i2}
+    end
 end
 
 %% Simple way to convert from cell array to structure array
 
 % use cell2struct function 
-AllcarData2 = cell2struct(carData,VarNames,2);
+AllcarData2 = cell2struct(carData,VarNames,2)
 
 
 %% DATASET ARRAYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -374,8 +375,10 @@ dataout = carDataDS(carDataDS.Cylinders == 4,:)
 dataset('XLSFile','hospital.xls','ReadObsNames',true)
 
 %% 4. Convert variables to nominal (i.e. categorically discrete)
-load('hospital')
-hospitalDS = hospital
+load('hospital');
+hospitalDS = hospital;
+
+hostop = hospitalDS(1:5,:)
 
 % What kind of variable type does the Smoker column contain?
 
@@ -405,7 +408,7 @@ clc
 % cylinder types so that I can get the number of different groups for my
 % structure array.  To accomplish this I will use the 'unique' function
 % which operates on both numeric and character/string variables
-uniqueCylinders = unique(dataSet3.Cylinders)
+uniqueCylinders = unique(carDataDS.Cylinders)
 
 % As you can see, the result is the unqiue values from the vector
 % Now we know two useful pieces of information:
@@ -417,7 +420,7 @@ uniqueCylinders = unique(dataSet3.Cylinders)
 
 % First let's initialize an empty structure array
 CarCylTypes = struct;
-
+%%
 % We know that the number of layers we want to add to the structure is
 % equivalent to the number of unique cylinder groups
 
@@ -441,7 +444,7 @@ for ci = 1:length(uniqueCylinders)
     
 
     
-    CarCylTypes.(strcat('Cyl_',cylString)) = dataSet3(dataSet3.Cylinders == uniqueCylinders(ci),:)
+    CarCylTypes.(strcat('Cyl_',cylString)) = carDataDS(carDataDS.Cylinders == uniqueCylinders(ci),:)
 end
 
 % These four lines of code performed a fairly complicated data orgaization
@@ -468,7 +471,7 @@ mean(CarCylTypes.Cyl_4.Acceleration(CarCylTypes.Cyl_4.Displacement > 100,:))
 
 %% Any Questions??????
 
-
+% Fix mouse data set
 
 
 
