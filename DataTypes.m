@@ -271,26 +271,12 @@ carsStruct(2).price = 25000
 
 carsStruct(1)
 
-%% Different datasets in each structure element
-
-mouse(1).name = 'Case56';
-mouse(1).group = 'control';
-mouse(1).data = [178; 185; 171];
-
-mouse(2).name = 'Case63';
-mouse(2).group = 'water deprived';
-mouse(2).data = [68; 118; 172];
-clc
-%% Examine 1 level from new struct
-
-mouse(1)
-
 %% Access field names of structures
 
 % Easy way to access levels of a struct array is to use the function
 % fieldnames
 
-structFnames = fieldnames(mouse)
+structFnames = fieldnames(carsStruct)
 
 %% Dynamic field names for structures
 
@@ -316,17 +302,19 @@ end
 
 %% There are different ways to cut up the data into a structure
 
+carData2 = carData(:,1:3); % remove Mfg from cell array
+
 SomecarData = struct;
-for i = 1:10
-    for i2 = 1:length(carData)
-        SomecarData.(MfgCellarray{i}).(VarNames{i2}) = carData{i2}
+for i = 1:5
+    for i2 = 1:length(carData2)
+        SomecarData.(MfgCellarray{i}).(VarNames{i2}) = carData2{1,i2}(i)
     end
 end
 
 %% Simple way to convert from cell array to structure array
 
 % use cell2struct function 
-AllcarData2 = cell2struct(carData,VarNames,2)
+AllcarData2 = cell2struct(carData,VarNames,2) % cellarray, fields, dimension
 
 
 %% DATASET ARRAYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -378,7 +366,7 @@ dataset('XLSFile','hospital.xls','ReadObsNames',true)
 load('hospital');
 hospitalDS = hospital;
 
-hostop = hospitalDS(1:5,:)
+hosTopVals = hospitalDS(1:5,:)
 
 % What kind of variable type does the Smoker column contain?
 
