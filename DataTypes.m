@@ -31,11 +31,11 @@ whos
 % 'whos' or 'class'
 
 % Let's make some generic variables
-a = 'a'; 
-b = 'some string';
-c = 1;
-d = pi;
-num = 17; e = num;
+a = 'a'; % single letter
+b = 'some string'; % string of characters
+c = 1; % single numeric
+d = pi; % matlab numeric
+num = 17; e = num; % inherited numeric from variable assignment
 %% 'whos' will display the class of all variables in workspace
 
 whos('a','b','c','d','e')
@@ -47,31 +47,21 @@ Mfg(1:10,:)
 
 % Working with an array of strings can be tricky
 
+%% Let's look at some examples
+
+% Example 1
+% What's the actual length of the word
+chevrolet = length('chevrolet')
+
+%% Length of chevrolet from string vector
+
+lengthOfchev = length(Mfg(1,:))
+
 % Although individual strings are of different lengths (e.g. chevrolet and
 % buick), all rows of a character/string vector inherit the length of the 
 % longest row (padded with blanks).
 
-%% Let's look at some examples
-
-% Example 1
-
-chevrolet = length('chevrolet') % actual length of chevrolet string
-
-chevVar = Mfg(1,:); % first string variable in Mfg string vector
-
-% It doesn't matter if we extract the string from the string vector
-% Length of string extracted from string vector
-lengthOfchevVar = length(chevVar)
-% Notice in the workspace how chevrolet is trailed by 6 spaces. 
-
-% Length of string in string vector
-lengthOfchev = length(Mfg(1,:))
-
-
-%% Example 2
-
-buick = length('buick')
-buickvar = Mfg(2,:)
+% One way to rid a vector of strings of their blanks is to use a Cell Array
 
 %% CELL ARRAYS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +71,7 @@ buickvar = Mfg(2,:)
 % advantages
 
 % Cell arrays are essentially indexed data containers
-
+clc
 %% What happens when we convert Mfg to a cell array
 
 MfgCellarray = cellstr(Mfg);
@@ -90,26 +80,47 @@ MfgCellarray = cellstr(Mfg);
 MfgClass = class(Mfg)
 MfgCAClass = class(MfgCellarray)
 
-%% Examine cell array elements
+%% Quick note on accessing cells in Cell Arrays '{}'
+
+% We're going to want to analyze chevrolet again; how do extract it?
+
+chevCA_1 = MfgCellarray(1) % Using paratheses
+
+%%
+
+chevCA_2 = MfgCellarray{1} % Using curly brackets
+
+% What gives?
+
+% Let's try class and length to see the difference
+
+%% Length Test
+
+length(chevCA_1)
+length(chevCA_2)
+%% Class Test
+
+class(chevCA_1)
+class(chevCA_2)
+
+% Notes:
+
+% Using paraentheses will extract the cell of interest
+% However, using curly brackets will extract the contents of the cell
+
+
+%% Back to our original question: Examine cell array elements
 
 % How do they differ from their string vector counterparts?
 
-chevVar2 = MfgCellarray{1}
-
-lengthofchevVar2 = length(chevVar2)
-lengthofchevCellArray = length(MfgCellarray{1})
-
-%% What about buick?
-
-buickVar2 = MfgCellarray{2}
-lengthOfbuickVar2 = length(buickVar2)
+lengthOfchev2 = length(MfgCellarray{1})
 
 % string variables in individual cells eliminate leading and trailing blanks 
 
 % The big advantage of a cell array is the ability to combine different data types
 
-% Let's combine the car names and the horsepower numeric array
-
+%% Let's combine the car names and the horsepower numeric array
+clc
 %% Convert Horsepower matrix to cell array
 
 % I could insert the entire horsepower numeric vector into a single cell of
@@ -119,7 +130,8 @@ lengthOfbuickVar2 = length(buickVar2)
 
 horsepowerCA1 = {Horsepower}
 
-%%
+%% What I really want is a cell for each numeric value 
+% Use the function num2cell
 horsepowerCA = num2cell(Horsepower)
 
 %% Is there a class difference between Horsepower and horsepowerCA
@@ -143,6 +155,11 @@ carArray = horzcat(horsepowerCA, MfgCellarray);
 % Examine first 5 rows of cell array
 upperVals = carArray(1:5,1:2)
 
+% This is helpful for maintaining the alignment/organization of your
+% observations. Each cell row will contain an observation whereas each
+% column will contain a different variable. Very helpful when looping
+% through multiple variables.
+
 %% Another advantage of cell arrays is the capacity to hold differently sized vectors
 
 cell1 = rand(1,100);
@@ -150,38 +167,26 @@ cell2 = rand(1,10);
 cell3 = rand(1,4000);
 cell4 = Mfg;
 
-%% Examine new cell array of engines separated in horsepower categories
+% Examine new cell array of engines separated in horsepower categories
 
 CellArray = {cell1 , cell2 , cell3 , cell4} % observe that each cell has a different sized vector
 
 %% One more example
 stuff = struct;
-cell1 = single(1);
-cell2 = 'hello';
+cell1 = {1:10};
+cell2 = 'hello world';
 cell3 = (1:10)';
 cell4 = stuff; stuff.name = 'John'; stuff.age = 25; 
 
 CA2 = {cell1,cell2 ; cell3,cell4}
 
-%%
-
-cellplot(CA2,'legend')
-
-
-%% Look at first cell and examine first cell container
-
-horsePower_rowID{1}
-
-% You now have a single variable with varying numbers of containers to
-% perform analyses; this would not be possible in a matrix
-
-%% Let's use one index to get 
-
-% Disadvantages of cell arrays
+%% Disadvantages of cell arrays
 
 % 1. Cannot keep implicit track of data information (i.e. row/column
 % headings)
-% 2. Can be cumbersome to work with for data analysis; better for extraction/orgization/storage
+
+% 2. Can be cumbersome to work with for data analysis; 
+% better for extraction/orgization/storage
 
 
 %% STRUCTURE ARRAYS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -299,7 +304,6 @@ AllcarData2 = cell2struct(carData,VarNames,2);
 importXLS = importdata('HospitalData_HF.xlsx');
 
 %%
-
 
 [~,~,cellArray] = xlsread('ClassXLs.xlsx')
 
