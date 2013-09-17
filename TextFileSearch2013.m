@@ -173,7 +173,7 @@ LeadsOut = cell(sum(indexOfDisabledLeads),1); % Initialize empty cell array
 for dc = 1:sum(indexOfDisabledLeads) % Iterate from 1 to the total number of disabled leads
     tempLine = linesOfinterest{dc}; % Use for loop iterator to extract each disabled line
     LeadsOut{dc,1} = cell2mat(regexpi(tempLine,'TT+[1-9]','match')); % Extract tetrode number
-    LeadsOut{dc,2} = strcat('Lead_',cell2mat(strtrim(regexpi(tempLine,'\s[1-9]\s','match')))); % Extract lead/channel number
+    LeadsOut{dc,2} = strcat('Lead_',cell2mat(strtrim(regexpi(tempLine,'\s[0-9]\s','match')))); % Extract lead/channel number
 end
   
 %%
@@ -206,8 +206,8 @@ switch OutForm % Input argument that we selected Outform = a chosen case
             LeadsOutSort = sortrows(LeadsOut,1); % Reorder tetrodes 1-4
             datasetI = zeros(length(LeadsOutSort),2); % Initialize empty matrix
             for i = 1:length(LeadsOutSort)
-                datasetI(i,1) = str2double(LeadsOutSort{i,1}(3)); % Extract tetrode number (i.e. string) and convert to number
-                datasetI(i,2) = str2double(LeadsOutSort{i,2}(6)); % Extract lead number (i.e. string) and convert to number
+                datasetI(i,1) = str2double(LeadsOutSort{i,1}(end)); % Extract tetrode number (i.e. string) and convert to number
+                datasetI(i,2) = str2double(LeadsOutSort{i,2}(end)); % Extract lead number (i.e. string) and convert to number
             end
             OutFile = mat2dataset(datasetI,'VarNames',{'Tetrode','Lead'}); % Create dataset array with column titles
             
